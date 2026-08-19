@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const session = Astro.locals.session;
+
+// Mock data to show the UI
+const miEmpresa = {
+  nombre: 'Acme Corp',
+  correos: ['admin@acme.com', 'soporte@acme.com', 'gerencia@acme.com']
+};
+
+const misTickets = [
+  { id: 1, asunto: 'Problema con facturación', estado: 'abierto', fecha: '2026-08-19' },
+  { id: 2, asunto: 'Modificación de banner principal', estado: 'cerrado', fecha: '2026-08-10' },
+];
+
+---
+
+<Layout title="Portal de Cliente">
+  <div class="min-h-screen bg-slate-50">
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md">
+            {miEmpresa.nombre.charAt(0)}
+          </div>
+          <div>
+            <h1 class="font-bold text-slate-800 leading-tight">{miEmpresa.nombre}</h1>
+            <p class="text-xs text-slate-500">Portal de Soporte</p>
+          </div>
+        </div>
+
+        <form method="POST" action="/api/auth/signout">
+          <button class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+            Cerrar Sesión
+          </button>
+        </form>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Tickets -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div>
+                <h2 class="text-2xl font-bold text-slate-800">¿Necesitas ayuda?</h2>
+                <p class="text-slate-500 mt-1">Abre un nuevo ticket y nuestro equipo lo resolverá a la brevedad.</p>
+              </div>
+              <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Abrir Ticket
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+              <h3 class="font-bold text-slate-800 text-lg">Tus Tickets de Soporte</h3>
+              <div class="flex gap-2">
+                <select class="text-sm border-slate-200 rounded-lg bg-slate-50 px-3 py-1.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                  <option>Todos</option>
+                  <option>Abiertos</option>
+                  <option>Cerrados</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="divide-y divide-slate-100">
+              {misTickets.map(ticket => (
+                <div class="p-6 hover:bg-slate-50 transition-colors cursor-pointer group">
+                  <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors text-lg">{ticket.asunto}</h4>
+                    <span class={`px-3 py-1 text-xs font-bold rounded-full border ${ticket.estado === 'abierto' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                      {ticket.estado.toUpperCase()}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-4 text-sm text-slate-500">
+                    <span class="flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      {ticket.fecha}
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+                      3 mensajes
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Settings & Info -->
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              Correos Autorizados
+            </h3>
+            <p class="text-sm text-slate-500 mb-4">Cualquiera de estos correos puede iniciar sesión y gestionar tickets a nombre de {miEmpresa.nombre}.</p>
+            
+            <ul class="space-y-3 mb-6">
+              {miEmpresa.correos.map(correo => (
+                <li class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-sm font-medium text-slate-700">{correo}</span>
+                  <button class="text-slate-400 hover:text-red-500 transition-colors" title="Eliminar acceso">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <button class="w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+              Añadir correo
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</Layout>
