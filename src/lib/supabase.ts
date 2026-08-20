@@ -2,9 +2,11 @@ import { createServerClient } from '@supabase/ssr';
 import type { AstroCookies } from 'astro';
 
 export const createSupabaseClient = (cookies: AstroCookies) => {
+  const cleanEnv = (val: string | undefined) => val ? val.replace(/^["']|["']$/g, '').trim() : '';
+
   return createServerClient(
-    import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY,
+    cleanEnv(import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL),
+    cleanEnv(import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY),
     {
       cookies: {
         get(key) {
