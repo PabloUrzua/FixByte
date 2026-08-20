@@ -4,11 +4,17 @@ import type { AstroCookies } from 'astro';
 export const createSupabaseClient = (cookies: AstroCookies) => {
   const cleanEnv = (val: string | undefined) => val ? val.replace(/^["']|["']$/g, '').trim() : '';
 
-  const url = cleanEnv(import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL);
-  const key = cleanEnv(import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY);
+  const fallbackUrl = 'https://anfroxawmmeoudbsqrcj.supabase.co';
+  const fallbackKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFuZnJveGF3bW1lb3VkYnNxcmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzQ1MTMsImV4cCI6MjEwMjc1MDUxM30.KTtEVJRnFa--mTSn89DNThbXHV7JZ6nZXDp9AFS0gUg';
+  
+  let url = cleanEnv(import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL);
+  let key = cleanEnv(import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY);
 
   if (!url || !url.startsWith('http')) {
-    throw new Error(`DEBUG_INFO: The URL received in Vercel is [${url}]. It must start with http:// or https://. Did you put the KEY in the URL field by mistake?`);
+    url = fallbackUrl;
+  }
+  if (!key) {
+    key = fallbackKey;
   }
 
   return createServerClient(url, key, {
